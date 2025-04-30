@@ -1,11 +1,7 @@
-name: Generate Snake Profile
+name: Generate Snake #2
 
 on:
-  workflow_dispatch:
-
-concurrency:
-  group: "snake-workflow"  # Nome único para identificar o workflow
-  cancel-in-progress: true  # Cancelar execuções anteriores
+  workflow_dispatch: # Remover ou comentar os outros triggers automáticos como schedule, push, etc.
 
 jobs:
   generate:
@@ -16,7 +12,7 @@ jobs:
           github_user_name: solundev
           outputs: |
             dist/github-contribution-grid-snake.svg
-          color_snake: rainbow  # Definindo rainbow como cor
+          color_snake: rainbow
           color_snake_gradient: 1
           color_dots: '#EEEEEE,#CCCCCC,#999999,#666666,#333333'
           background_color: '#00000000'
