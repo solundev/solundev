@@ -69,10 +69,13 @@ jobs:
             -i "//linearGradient/stop[8]" -t attr -n "stop-color" -v "#FF0000" \
             dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
-          # Substitui todos os fill="#f47fff" por fill="url(#rainbow)"
-          xmlstarlet ed -u '//*[@fill="#f47fff"]/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
+          # Substitui todos os elementos de cor roxa (f47fff) diretamente pelo gradiente
+          xmlstarlet ed -u '//svg//path[@fill="#f47fff"]/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
-          # Opcional: aplica estilo de gradiente diretamente (forçar)
+          # Se necessário, substitua outros elementos, como 'circle', também
+          xmlstarlet ed -u '//svg//circle[@fill="#f47fff"]/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
+
+          # Aplica gradiente a outros atributos de 'style' ou 'fill'
           xmlstarlet ed -u '//*[@fill="#f47fff"]/@style' -v 'fill:url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
