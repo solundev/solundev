@@ -12,13 +12,11 @@ jobs:
 
     steps:
       - uses: Platane/snk@v3
-        id: snake
         with:
           github_user_name: solundev
-          outputs: |
-            dist/github-contribution-grid-snake.svg
+          outputs: dist/github-contribution-grid-snake.svg
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          args: >
+          args: |
             --color_snake "#FFFFFF"
             --color_dots "#FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#4B0082,#EE82EE"
             --background_color "#00000000"
@@ -28,5 +26,5 @@ jobs:
         with:
           author_name: github-actions
           author_email: github-actions@github.com
-          message: "generate contribution graph"
+          message: "Generate contribution graph snake"
           add: "dist/github-contribution-grid-snake.svg"
