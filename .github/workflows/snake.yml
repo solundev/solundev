@@ -30,28 +30,34 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xmlstarlet
 
-      - name: Apply rainbow gradient using sed
+      - name: Apply unique color changing effect
         run: |
-          # Define o gradiente rainbow
-          RAINBOW='<defs><linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF0000"/><stop offset="20%" stop-color="#FF7F00"/><stop offset="40%" stop-color="#FFFF00"/><stop offset="60%" stop-color="#00FF00"/><stop offset="80%" stop-color="#0000FF"/><stop offset="100%" stop-color="#8B00FF"/></linearGradient></defs>'
+          # Define a set of unique colors for the animation (using a simple set of colors instead of gradient)
+          COLORS='
+          <style>
+            @keyframes colorChange {
+              0% { fill: #FF0000; }   /* Red */
+              25% { fill: #00FF00; }  /* Green */
+              50% { fill: #0000FF; }  /* Blue */
+              75% { fill: #FFFF00; }  /* Yellow */
+              100% { fill: #8B00FF; } /* Purple */
+            }
 
-          # Insere o <defs> após a tag <svg ...>
-          sed -i "s|<svg[^>]*>|&$RAINBOW|" dist/github-contribution-grid-snake.svg
+            .s {
+              animation: colorChange 5s infinite; /* 5 seconds for one cycle */
+            }
+          </style>'
 
-          # Substitui a linha da classe .s para usar o gradiente
-          sed -i 's/\.s{[^}]*fill:[^;]*;/\.s{fill:url(#rainbow);/' dist/github-contribution-grid-snake.svg
+          # Insere o estilo de animação no SVG
+          sed -i "s|</svg>|$COLORS</svg>|" dist/github-contribution-grid-snake.svg
 
-          # Substitui todos os elementos de cor de preenchimento para o gradiente rainbow
-          xmlstarlet ed -u '//svg//path/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
-          xmlstarlet ed -u '//svg//circle/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
-
-          # Aplica o gradiente rainbow a todos os atributos "fill" do SVG
-          xmlstarlet ed -u '//*[@fill]//@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
+          # Aplica a animação de cores a todos os elementos que têm a classe .s
+          sed -i 's/\.s{[^}]*fill:[^;]*;/\.s{fill:#FF0000; animation: colorChange 5s infinite;/' dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add dist/
-          git commit -m "Generate snake animation with rainbow effect"
+          git commit -m "Generate snake animation with unique color changing effect"
           git push origin HEAD:output --force
