@@ -15,7 +15,7 @@ jobs:
         with:
           github_user_name: solundev
           outputs: |
-            dist/github-contribution-grid-snake.svg?color_snake=#FF0000&color_dots=#FFFFFF&background_color=#00000000&color_line=#FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#4B0082,#EE82EE
+            dist/github-contribution-grid-snake.svg?color_snake=#FF0000&color_dots_animation=rainbow
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
