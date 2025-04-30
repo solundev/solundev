@@ -51,6 +51,9 @@ jobs:
           </defs>
           ' > temp_styles.svg
 
+          # Remover o conteúdo extra se ele já existir
+          sed -i '/<defs>/,$d' dist/github-contribution-grid-snake.svg
+
           # Inserir o conteúdo do arquivo temporário dentro da tag <svg> logo após a abertura da tag <svg>
           sed -i '/<svg[^>]*>/r temp_styles.svg' dist/github-contribution-grid-snake.svg
 
