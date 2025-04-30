@@ -16,7 +16,7 @@ jobs:
           github_user_name: solundev
           outputs: |
             dist/github-contribution-grid-snake.svg
-          color_snake: rainbow
+          color_snake: '#FF0000'
           color_snake_gradient: 1
           color_dots: '#EEEEEE,#CCCCCC,#999999,#666666,#333333'
           background_color: '#00000000'
