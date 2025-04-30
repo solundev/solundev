@@ -22,20 +22,28 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Verify SVG file exists
+      - name: Verify SVG file exists and is not empty
         run: |
-          if [ ! -f dist/github-contribution-grid-snake.svg ]; then
+          FILE="dist/github-contribution-grid-snake.svg"
+          if [ ! -f "$FILE" ]; then
             echo "Error: SVG file was not generated."
             exit 1
           fi
+          if [ ! -s "$FILE" ]; then
+            echo "Error: SVG file is empty."
+            exit 1
+          fi
+
+      - name: Backup original SVG
+        run: cp dist/github-contribution-grid-snake.svg dist/github-contribution-grid-snake-original.svg
 
       - name: Set write permission for dist
         run: sudo chmod -R 777 dist
 
       - name: Inject animated rainbow style into SVG
         run: |
-          # Define o arquivo SVG
           FILE="dist/github-contribution-grid-snake.svg"
+          BACKUP_FILE="dist/github-contribution-grid-snake-original.svg"
 
           # Verifica se o arquivo existe antes de prosseguir
           if [ ! -f "$FILE" ]; then
@@ -66,13 +74,25 @@ jobs:
           # Aplica a classe .rainbow nos elementos do SVG
           sed -i 's/fill="[^"]*"/& class="rainbow"/' tmp.svg
 
+          # Verifica se o arquivo foi modificado corretamente
+          if [ ! -s tmp.svg ]; then
+            echo "Error: Modified SVG is empty. Restoration will occur."
+            mv "$BACKUP_FILE" "$FILE"
+            exit 1
+          fi
+
           # Substitui o arquivo final
           mv tmp.svg "$FILE"
 
       - name: Verify modified SVG
         run: |
-          if [ ! -s dist/github-contribution-grid-snake.svg ]; then
-            echo "Error: Modified SVG is empty or does not exist."
+          FILE="dist/github-contribution-grid-snake.svg"
+          if [ ! -f "$FILE" ]; then
+            echo "Error: Modified SVG file was not found."
+            exit 1
+          fi
+          if [ ! -s "$FILE" ]; then
+            echo "Error: Modified SVG file is empty."
             exit 1
           fi
 
