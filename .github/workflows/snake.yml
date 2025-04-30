@@ -38,8 +38,8 @@ jobs:
           # Insere o <defs> após a tag <svg ...>
           sed -i "s|<svg[^>]*>|&$RAINBOW|" dist/github-contribution-grid-snake.svg
 
-          # Substitui todas as cores de preenchimento pelo gradiente
-          sed -i 's/fill="[^"]*"/fill="url(#rainbow)"/g' dist/github-contribution-grid-snake.svg
+          # Substitui a linha da classe .s para usar o gradiente
+          sed -i 's/\.s{[^}]*fill:[^;]*;/\.s{fill:url(#rainbow);/' dist/github-contribution-grid-snake.svg
 
           # Substitui todos os elementos de cor de preenchimento para o gradiente rainbow
           xmlstarlet ed -u '//svg//path/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
