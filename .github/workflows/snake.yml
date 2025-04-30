@@ -19,15 +19,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Ensure dist directory exists and set permissions
-        run: |
-          # Verificar se o diretório dist existe e criar, se necessário
-          if [ ! -d "dist" ]; then
-            mkdir -p dist
-          fi
-          # Garantir permissões para o diretório e os arquivos
-          chmod -R 777 dist
-
       - name: Add rainbow gradient to snake
         run: |
           sudo apt-get update
@@ -67,12 +58,11 @@ jobs:
             -a "//stop[8]" -t attr -n "stop-color" -v "#FF0000" \
             dist/github-contribution-grid-snake.svg
 
-          # Cria o arquivo temporário em outro diretório com permissões de superusuário
-          sudo xmlstarlet ed -u '//path' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > /tmp/github-contribution-grid-snake.svg.tmp
+          # Cria o arquivo temporário diretamente no diretório dist sem alteração de permissões
+          xmlstarlet ed -u '//path' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > dist/github-contribution-grid-snake.svg.tmp
 
-          # Mover o arquivo temporário para o diretório dist e garantir permissões
-          sudo mv /tmp/github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
-          sudo chmod 666 dist/github-contribution-grid-snake.svg
+          # Renomeia o arquivo temporário para o final
+          mv dist/github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
         run: |
