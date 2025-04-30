@@ -19,10 +19,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Commit and Push
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git add dist/
-          git commit -m "Generate snake animation"
-          git push origin HEAD:output --force
+      - name: Generate GitHub Snake Contribution Grid
+        uses: Platane/snk@v3
+        with:
+          github_user_name: solundev
+          outputs: dist/github-contribution-grid-snake.svg
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          args: "--color_snake '#FFFFFF' --color_dots '#FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#4B0082,#EE82EE' --background_color '#00000000'"
