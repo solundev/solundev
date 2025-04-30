@@ -27,30 +27,32 @@ jobs:
 
       - name: Inject animated rainbow style into SVG
         run: |
-          # Adiciona o estilo CSS com animação
           echo '<style>
-            @keyframes rainbow {
-              0% { fill: #FF0000; }
-              20% { fill: #FF7F00; }
-              40% { fill: #FFFF00; }
-              60% { fill: #00FF00; }
-              80% { fill: #0000FF; }
-              100% { fill: #8B00FF; }
-            }
-            .rainbow {
-              animation: rainbow 5s infinite;
-            }
+          @keyframes rainbow {
+            0% { fill: #FF0000; }
+            20% { fill: #FF7F00; }
+            40% { fill: #FFFF00; }
+            60% { fill: #00FF00; }
+            80% { fill: #0000FF; }
+            100% { fill: #8B00FF; }
+          }
+          .rainbow {
+            animation: rainbow 5s infinite;
+          }
           </style>' > rainbow-style.txt
 
-          # Caminho do arquivo SVG
           FILE="dist/github-contribution-grid-snake.svg"
 
-          # Processar o arquivo SVG: Inserir estilo dentro da tag <svg>
+          # Prepara o arquivo temporário com as modificações
           head -n 1 "$FILE" > tmp.svg
           cat rainbow-style.txt >> tmp.svg
           tail -n +2 "$FILE" >> tmp.svg
+          
+          # Aplique a classe .rainbow nos elementos do SVG que devem ser animados
+          # Adicionar a classe nos elementos que têm o atributo 'fill'
+          sed -i 's/fill="[^"]*"/& class="rainbow"/' tmp.svg
 
-          # Substituir o SVG original pelo novo
+          # Substitua o arquivo final
           mv tmp.svg "$FILE"
 
       - name: Commit and Push result
