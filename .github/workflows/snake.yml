@@ -30,25 +30,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xmlstarlet
 
-      - name: Apply rainbow gradient
+      - name: Apply rainbow gradient using sed
         run: |
-          # Adiciona <defs> e gradiente arco-íris
-          xmlstarlet ed \
-            -s "/svg" -t elem -n "defs" -v "" \
-            -s "//defs" -t elem -n "linearGradient" -v "" \
-            -i "//linearGradient" -t attr -n "id" -v "rainbow" \
-            -i "//linearGradient" -t attr -n "x1" -v "0%" \
-            -i "//linearGradient" -t attr -n "y1" -v "0%" \
-            -i "//linearGradient" -t attr -n "x2" -v "100%" \
-            -i "//linearGradient" -t attr -n "y2" -v "0%" \
-            -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//linearGradient/stop[1]" -t attr -n "offset" -v "0%" \
-            -i "//linearGradient/stop[1]" -t attr -n "stop-color" -v "#FF0000" \
-            -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//linearGradient/stop[2]" -t attr -n "offset" -v "100%" \
-            -i "//linearGradient/stop[2]" -t attr -n "stop-color" -v "#0000FF" \
-            -u "//path/@fill" -v "url(#rainbow)" \
-            dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
+          # Define o gradiente rainbow
+          RAINBOW='<defs><linearGradient id="rainbow" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FF0000"/><stop offset="20%" stop-color="#FF7F00"/><stop offset="40%" stop-color="#FFFF00"/><stop offset="60%" stop-color="#00FF00"/><stop offset="80%" stop-color="#0000FF"/><stop offset="100%" stop-color="#8B00FF"/></linearGradient></defs>'
+
+          # Insere o <defs> após a tag <svg ...>
+          sed -i "s|<svg[^>]*>|&$RAINBOW|" dist/github-contribution-grid-snake.svg
+
+          # Substitui todas as cores de preenchimento pelo gradiente
+          sed -i 's/fill="[^"]*"/fill="url(#rainbow)"/g' dist/github-contribution-grid-snake.svg
 
           # Substitui todos os elementos de cor de preenchimento para o gradiente rainbow
           xmlstarlet ed -u '//svg//path/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
