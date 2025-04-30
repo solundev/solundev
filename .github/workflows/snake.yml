@@ -51,12 +51,10 @@ jobs:
           </defs>
           ' > temp_styles.svg
 
-          # Remover qualquer conteúdo extra a partir da tag <defs> se existir
-          sed -i '/<defs>/,$d' dist/github-contribution-grid-snake.svg
-
-          # Inserir o conteúdo de animação corretamente dentro da tag <svg>
-          # Vai ser inserido logo após a tag <svg>, antes de qualquer outro conteúdo.
-          sed -i '/<svg[^>]*>/r temp_styles.svg' dist/github-contribution-grid-snake.svg
+          # Adicionar o conteúdo de animação antes do fechamento da tag </svg>
+          # Isso vai garantir que o conteúdo seja inserido dentro do SVG e não após o fechamento.
+          sed -i '/<\/svg>/i \\
+          '"$(cat temp_styles.svg)" dist/github-contribution-grid-snake.svg
 
           # Aplica a animação a todos os elementos que têm a classe .s
           xmlstarlet ed -u '//svg//*[contains(@class, "s")]' -v 'style="animation: colorChange 5s infinite;"' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
