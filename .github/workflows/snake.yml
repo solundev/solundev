@@ -1,7 +1,11 @@
-name: Generate Snake #2
+name: Generate Snake
 
 on:
-  workflow_dispatch: # Remover ou comentar os outros triggers automáticos como schedule, push, etc.
+  workflow_dispatch:  # Dispara apenas manualmente
+
+concurrency:
+  group: snake
+  cancel-in-progress: true
 
 jobs:
   generate:
@@ -16,6 +20,7 @@ jobs:
           color_snake_gradient: 1
           color_dots: '#EEEEEE,#CCCCCC,#999999,#666666,#333333'
           background_color: '#00000000'
+
       - uses: crazy-max/ghaction-github-pages@v3
         with:
           target_branch: output
