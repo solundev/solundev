@@ -51,10 +51,11 @@ jobs:
           </defs>
           ' > temp_styles.svg
 
-          # Remover o conteúdo extra se ele já existir
+          # Remover qualquer conteúdo extra a partir da tag <defs> se existir
           sed -i '/<defs>/,$d' dist/github-contribution-grid-snake.svg
 
-          # Inserir o conteúdo do arquivo temporário dentro da tag <svg> logo após a abertura da tag <svg>
+          # Inserir o conteúdo de animação corretamente dentro da tag <svg>
+          # Vai ser inserido logo após a tag <svg>, antes de qualquer outro conteúdo.
           sed -i '/<svg[^>]*>/r temp_styles.svg' dist/github-contribution-grid-snake.svg
 
           # Aplica a animação a todos os elementos que têm a classe .s
