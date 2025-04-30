@@ -67,10 +67,9 @@ jobs:
             -a "//stop[8]" -t attr -n "stop-color" -v "#FF0000" \
             dist/github-contribution-grid-snake.svg
 
-          # Aplica o gradiente arco-íris na cobrinha
+          # Aplica o gradiente arco-íris nos caminhos (paths) da cobrinha
           xmlstarlet ed -u '//path' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > dist/github-contribution-grid-snake.svg.tmp
           mv dist/github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
-
 
       - name: Commit and Push
         run: |
