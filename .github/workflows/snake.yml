@@ -16,27 +16,26 @@ jobs:
           github_user_name: solundev
           outputs: |
             dist/github-contribution-grid-snake.svg
-          palette: rainbow
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Ensure dist directory exists
-        run: |
-          mkdir -p dist
+        run: mkdir -p dist
 
       - name: Set permissions for dist directory
-        run: |
-          sudo chmod -R 777 dist
+        run: sudo chmod -R 777 dist
 
-      - name: Add rainbow gradient to snake
+      - name: Install xmlstarlet
         run: |
           sudo apt-get update
           sudo apt-get install -y xmlstarlet
 
-          # Adiciona o elemento <defs> ao SVG
+      - name: Add rainbow gradient and apply it
+        run: |
+          # Adiciona <defs> ao SVG se não existir
           xmlstarlet ed -s "/svg" -t elem -n "defs" -v "" dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
-          # Adiciona o gradiente arco-íris dentro de <defs>
+          # Adiciona o gradiente rainbow dentro de <defs>
           xmlstarlet ed \
             -s "//defs" -t elem -n "linearGradient" -v "" \
             -i "//linearGradient" -t attr -n "id" -v "rainbow" \
@@ -45,32 +44,32 @@ jobs:
             -i "//linearGradient" -t attr -n "x2" -v "100%" \
             -i "//linearGradient" -t attr -n "y2" -v "0%" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//stop[1]" -t attr -n "offset" -v "0%" \
-            -i "//stop[1]" -t attr -n "stop-color" -v "#FF0000" \
+            -i "//linearGradient/stop[1]" -t attr -n "offset" -v "0%" \
+            -i "//linearGradient/stop[1]" -t attr -n "stop-color" -v "#FF0000" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//stop[2]" -t attr -n "offset" -v "14%" \
-            -i "//stop[2]" -t attr -n "stop-color" -v "#FFA500" \
+            -i "//linearGradient/stop[2]" -t attr -n "offset" -v "14%" \
+            -i "//linearGradient/stop[2]" -t attr -n "stop-color" -v "#FFA500" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//stop[3]" -t attr -n "offset" -v "28%" \
-            -i "//stop[3]" -t attr -n "stop-color" -v "#FFFF00" \
+            -i "//linearGradient/stop[3]" -t attr -n "offset" -v "28%" \
+            -i "//linearGradient/stop[3]" -t attr -n "stop-color" -v "#FFFF00" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//stop[4]" -t attr -n "offset" -v "42%" \
-            -i "//stop[4]" -t attr -n "stop-color" -v "#00FF00" \
+            -i "//linearGradient/stop[4]" -t attr -n "offset" -v "42%" \
+            -i "//linearGradient/stop[4]" -t attr -n "stop-color" -v "#00FF00" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//stop[5]" -t attr -n "offset" -v "57%" \
-            -i "//stop[5]" -t attr -n "stop-color" -v "#0000FF" \
+            -i "//linearGradient/stop[5]" -t attr -n "offset" -v "57%" \
+            -i "//linearGradient/stop[5]" -t attr -n "stop-color" -v "#0000FF" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//stop[6]" -t attr -n "offset" -v "71%" \
-            -i "//stop[6]" -t attr -n "stop-color" -v "#4B0082" \
+            -i "//linearGradient/stop[6]" -t attr -n "offset" -v "71%" \
+            -i "//linearGradient/stop[6]" -t attr -n "stop-color" -v "#4B0082" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//stop[7]" -t attr -n "offset" -v "85%" \
-            -i "//stop[7]" -t attr -n "stop-color" -v "#EE82EE" \
+            -i "//linearGradient/stop[7]" -t attr -n "offset" -v "85%" \
+            -i "//linearGradient/stop[7]" -t attr -n "stop-color" -v "#EE82EE" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//stop[8]" -t attr -n "offset" -v "100%" \
-            -i "//stop[8]" -t attr -n "stop-color" -v "#FF0000" \
+            -i "//linearGradient/stop[8]" -t attr -n "offset" -v "100%" \
+            -i "//linearGradient/stop[8]" -t attr -n "stop-color" -v "#FF0000" \
             dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
-          # Aplica o gradiente nos elementos com fill="#f47fff"
+          # Substitui todos os fill roxos pelo gradiente rainbow
           xmlstarlet ed -u '//*[@fill="#f47fff"]/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
