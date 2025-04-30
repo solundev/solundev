@@ -13,8 +13,8 @@ jobs:
           outputs: |
             dist/github-contribution-grid-snake.svg
           args: >
-            --color_snake rainbow
-            --color_dots #EEEEEE,#CCCCCC,#999999,#666666,#333333
+            --color_snake #FFFFFF
+            --color_dots #FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#4B0082,#EE82EE
             --background_color #00000000
       - uses: crazy-max/ghaction-github-pages@v3
         with:
