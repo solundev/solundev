@@ -22,6 +22,10 @@ jobs:
       - name: Ensure dist directory exists
         run: |
           mkdir -p dist
+          
+      - name: Set permissions for dist directory
+        run: |
+          sudo chmod -R 777 dist
 
       - name: Add rainbow gradient to snake
         run: |
