@@ -62,11 +62,11 @@ jobs:
             -a "//stop[8]" -t attr -n "stop-color" -v "#FF0000" \
             dist/github-contribution-grid-snake.svg
 
-          # Usa um diretório temporário para salvar o arquivo
-          xmlstarlet ed -u '//path' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > github-contribution-grid-snake.svg.tmp
+          # Usa um diretório temporário para salvar o arquivo e depois move para ./dist
+          xmlstarlet ed -u '//path' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > ./github-contribution-grid-snake.svg.tmp
 
-          # Mover para o diretório dist após criação
-          mv github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
+          # Movendo o arquivo para ./dist
+          mv ./github-contribution-grid-snake.svg.tmp ./dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
         run: |
