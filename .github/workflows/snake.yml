@@ -18,6 +18,14 @@ jobs:
           outputs: dist/github-contribution-grid-snake.svg
           args: '--color_snake="#FFFFFF" --color_dots="#FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#4B0082,#EE82EE" --background_color="#00000000"'
 
+      - name: Check if the SVG was generated
+        run: |
+          ls -alh dist/
+
+      - name: Ensure dist directory exists
+        run: |
+          mkdir -p dist
+
       - name: Commit and push SVG
         run: |
           git config --local user.name "GitHub Actions"
