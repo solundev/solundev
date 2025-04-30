@@ -32,8 +32,8 @@ jobs:
 
       - name: Apply unique color changing effect
         run: |
-          # Define a set of unique colors for the animation (using a simple set of colors instead of gradient)
-          COLORS='
+          # Criar o conteúdo de animação como um arquivo temporário
+          echo '
           <defs>
             <style>
               @keyframes colorChange {
@@ -48,13 +48,13 @@ jobs:
                 animation: colorChange 5s infinite; /* 5 seconds for one cycle */
               }
             </style>
-          </defs>'
+          </defs>
+          ' > temp_styles.svg
 
-          # Insere o estilo de animação no SVG dentro de <defs>
-          # Usando uma substituição segura com sed para adicionar o estilo antes de </svg>
-          sed -i "/<\/svg>/i $COLORS" dist/github-contribution-grid-snake.svg
+          # Inserir o conteúdo do arquivo temporário no SVG
+          sed -i "/<\/svg>/r temp_styles.svg" dist/github-contribution-grid-snake.svg
 
-          # Adiciona animação aos elementos com a classe .s
+          # Adicionar animação aos elementos com a classe .s
           xmlstarlet ed -u '//svg//*[contains(@class, "s")]' -v 'style="animation: colorChange 5s infinite;"' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
