@@ -51,9 +51,10 @@ jobs:
           </defs>'
 
           # Insere o estilo de animação no SVG dentro de <defs>
-          sed -i "s|</svg>|$COLORS</svg>|" dist/github-contribution-grid-snake.svg
+          # Usando uma substituição segura com sed para adicionar o estilo antes de </svg>
+          sed -i "/<\/svg>/i $COLORS" dist/github-contribution-grid-snake.svg
 
-          # Adiciona animação aos elementos com a classe .s, sem depender de sed
+          # Adiciona animação aos elementos com a classe .s
           xmlstarlet ed -u '//svg//*[contains(@class, "s")]' -v 'style="animation: colorChange 5s infinite;"' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
