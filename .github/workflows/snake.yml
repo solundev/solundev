@@ -43,10 +43,9 @@ jobs:
 
           FILE="dist/github-contribution-grid-snake.svg"
 
-          head -n 1 "$FILE" > tmp.svg
-          cat rainbow-style.txt >> tmp.svg
-          tail -n +2 "$FILE" >> tmp.svg
-          mv tmp.svg "$FILE"
+          # Modifica o arquivo SVG para incluir o <style> após a primeira tag <svg ...>
+          sed -i '1s|<svg|<svg xmlns="http://www.w3.org/2000/svg">|' "$FILE"
+          sed -i '/<svg[^>]*>/r rainbow-style.txt' "$FILE"
 
       - name: Commit and Push result
         run: |
