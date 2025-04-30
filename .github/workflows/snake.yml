@@ -22,22 +22,32 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set write permission for dist
-        run: sudo chmod -R 777 dist
+      - name: Verify SVG file exists and is not empty
+        run: |
+          FILE="dist/github-contribution-grid-snake.svg"
+          if [ ! -f "$FILE" ]; then
+            echo "Error: SVG file was not generated."
+            exit 1
+          fi
+          if [ ! -s "$FILE" ]; then
+            echo "Error: SVG file is empty."
+            exit 1
+          fi
 
       - name: Backup original SVG (with fixed permissions)
-        run: cp dist/github-contribution-grid-snake.svg dist/github-contribution-grid-snake-original.svg
+        run: |
+          sudo chmod -R 777 dist
+          cp dist/github-contribution-grid-snake.svg dist/github-contribution-grid-snake-original.svg
+
+      - name: Debug - Output original SVG content
+        run: |
+          echo "Original SVG content:"
+          cat dist/github-contribution-grid-snake-original.svg
 
       - name: Inject animated rainbow style into SVG
         run: |
           FILE="dist/github-contribution-grid-snake.svg"
           BACKUP_FILE="dist/github-contribution-grid-snake-original.svg"
-
-          # Verifica se o arquivo existe antes de prosseguir
-          if [ ! -f "$FILE" ]; then
-            echo "Error: SVG file not found. Aborting modification."
-            exit 1
-          fi
 
           # Adiciona estilo animado ao SVG
           echo '<style>
@@ -59,7 +69,7 @@ jobs:
           cat rainbow-style.txt >> tmp.svg
           tail -n +2 "$FILE" >> tmp.svg
 
-          # Aplica a classe .rainbow nos elementos do SVG
+          # Adiciona a classe .rainbow (apenas para elementos com 'fill')
           sed -i 's/fill="[^"]*"/& class="rainbow"/' tmp.svg
 
           # Verifica se o arquivo foi modificado corretamente
@@ -71,6 +81,11 @@ jobs:
 
           # Substitui o arquivo final
           mv tmp.svg "$FILE"
+
+      - name: Debug - Output modified SVG content
+        run: |
+          echo "Modified SVG content:"
+          cat dist/github-contribution-grid-snake.svg
 
       - name: Verify modified SVG
         run: |
