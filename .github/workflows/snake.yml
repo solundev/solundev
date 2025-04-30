@@ -28,29 +28,31 @@ jobs:
       - name: Inject animated rainbow style into SVG
         run: |
           # Criar o conteúdo CSS para animação dentro de <style>
-          echo '<style>
-            @keyframes rainbow {
-              0% { fill: #FF0000; }
-              20% { fill: #FF7F00; }
-              40% { fill: #FFFF00; }
-              60% { fill: #00FF00; }
-              80% { fill: #0000FF; }
-              100% { fill: #8B00FF; }
-            }
-            .s {
-              animation: rainbow 5s infinite;
-            }
-          </style>' > rainbow-style.txt
+          echo '<defs>
+            <style type="text/css">
+              @keyframes rainbow {
+                0% { fill: #FF0000; }
+                20% { fill: #FF7F00; }
+                40% { fill: #FFFF00; }
+                60% { fill: #00FF00; }
+                80% { fill: #0000FF; }
+                100% { fill: #8B00FF; }
+              }
+              .s {
+                animation: rainbow 5s infinite;
+              }
+            </style>
+          </defs>' > rainbow-style.txt
 
           # Definir o caminho do arquivo SVG
           FILE="dist/github-contribution-grid-snake.svg"
 
-          # Inserir o CSS dentro de <defs> no início do arquivo
+          # Inserir o CSS dentro de <defs> no início do arquivo SVG
           head -n 1 "$FILE" > tmp.svg
           cat rainbow-style.txt >> tmp.svg
           tail -n +2 "$FILE" >> tmp.svg
 
-          # Substitui o arquivo original pelo arquivo modificado
+          # Substituir o arquivo original pelo arquivo modificado
           mv tmp.svg "$FILE"
 
       - name: Commit and Push result
