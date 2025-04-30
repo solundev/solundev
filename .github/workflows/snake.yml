@@ -30,7 +30,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xmlstarlet
 
-      - name: Apply unique color changing effect
+      - name: Apply color changing animation
         run: |
           # Criar o conteúdo de animação como um arquivo temporário
           echo '
@@ -38,23 +38,23 @@ jobs:
             <style>
               @keyframes colorChange {
                 0% { fill: #FF0000; }   /* Red */
-                25% { fill: #00FF00; }  /* Green */
-                50% { fill: #0000FF; }  /* Blue */
-                75% { fill: #FFFF00; }  /* Yellow */
-                100% { fill: #8B00FF; } /* Purple */
+                25% { fill: #FF7F00; }  /* Orange */
+                50% { fill: #FFFF00; }  /* Yellow */
+                75% { fill: #00FF00; }  /* Green */
+                100% { fill: #0000FF; } /* Blue */
               }
 
               .s {
-                animation: colorChange 5s infinite; /* 5 seconds for one cycle */
+                animation: colorChange 5s infinite; /* Animação de 5 segundos por ciclo */
               }
             </style>
           </defs>
           ' > temp_styles.svg
 
-          # Inserir o conteúdo do arquivo temporário dentro da tag <svg> sem causar erro
+          # Inserir o conteúdo do arquivo temporário dentro da tag <svg> logo após a abertura da tag <svg>
           sed -i '/<svg[^>]*>/r temp_styles.svg' dist/github-contribution-grid-snake.svg
 
-          # Adicionar animação aos elementos com a classe .s
+          # Aplica a animação a todos os elementos que têm a classe .s
           xmlstarlet ed -u '//svg//*[contains(@class, "s")]' -v 'style="animation: colorChange 5s infinite;"' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
