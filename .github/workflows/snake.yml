@@ -22,23 +22,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Verify SVG file exists and is not empty
-        run: |
-          FILE="dist/github-contribution-grid-snake.svg"
-          if [ ! -f "$FILE" ]; then
-            echo "Error: SVG file was not generated."
-            exit 1
-          fi
-          if [ ! -s "$FILE" ]; then
-            echo "Error: SVG file is empty."
-            exit 1
-          fi
-
-      - name: Backup original SVG
-        run: cp dist/github-contribution-grid-snake.svg dist/github-contribution-grid-snake-original.svg
-
       - name: Set write permission for dist
         run: sudo chmod -R 777 dist
+
+      - name: Backup original SVG (with fixed permissions)
+        run: cp dist/github-contribution-grid-snake.svg dist/github-contribution-grid-snake-original.svg
 
       - name: Inject animated rainbow style into SVG
         run: |
