@@ -1,4 +1,4 @@
-name: Generate Snake
+name: Generate Snake Rework
 
 on:
   schedule:
@@ -30,39 +30,36 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xmlstarlet
 
-      - name: Apply color changing animation
+      - name: Add animated rainbow style
         run: |
-          # Criar o conteúdo de animação como um arquivo temporário
-          echo '
-          <defs>
-            <style>
-              @keyframes colorChange {
-                0% { fill: #FF0000; }   /* Red */
-                25% { fill: #FF7F00; }  /* Orange */
-                50% { fill: #FFFF00; }  /* Yellow */
-                75% { fill: #00FF00; }  /* Green */
-                100% { fill: #0000FF; } /* Blue */
-              }
+          # Criar o bloco <defs> com animação e salvá-lo em um arquivo
+          cat <<EOF > defs.xml
+<defs>
+  <style>
+    @keyframes rainbow {
+      0%   { fill: #FF0000; }
+      20%  { fill: #FF7F00; }
+      40%  { fill: #FFFF00; }
+      60%  { fill: #00FF00; }
+      80%  { fill: #0000FF; }
+      100% { fill: #8B00FF; }
+    }
+    .s {
+      animation: rainbow 5s infinite;
+    }
+  </style>
+</defs>
+EOF
 
-              .s {
-                animation: colorChange 5s infinite; /* Animação de 5 segundos por ciclo */
-              }
-            </style>
-          </defs>
-          ' > temp_styles.svg
-
-          # Adicionar o conteúdo de animação antes do fechamento da tag </svg>
-          # Isso vai garantir que o conteúdo seja inserido dentro do SVG e não após o fechamento.
-          sed -i '/<\/svg>/i \\
-          '"$(cat temp_styles.svg)" dist/github-contribution-grid-snake.svg
-
-          # Aplica a animação a todos os elementos que têm a classe .s
-          xmlstarlet ed -u '//svg//*[contains(@class, "s")]' -v 'style="animation: colorChange 5s infinite;"' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
+          # Inserir o conteúdo do defs.xml como primeiro filho da tag <svg>
+          xmlstarlet ed -L -s "/svg" -t elem -n "tmpDefs" -v "" dist/github-contribution-grid-snake.svg
+          xmlstarlet ed -L -u "//tmpDefs" -x "document('defs.xml')/defs" dist/github-contribution-grid-snake.svg
+          xmlstarlet ed -L -r "//tmpDefs" -v "defs" dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add dist/
-          git commit -m "Generate snake animation with unique color changing effect"
+          git commit -m "Generate snake animation with animated rainbow effect"
           git push origin HEAD:output --force
