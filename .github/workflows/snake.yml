@@ -2,7 +2,7 @@ name: Generate Snake
 
 on:
   schedule:
-    - cron: "0 0 * * *" # Executa diariamente à meia-noite
+    - cron: "0 0 * * *"
   workflow_dispatch:
 
 jobs:
@@ -16,14 +16,13 @@ jobs:
           github_user_name: solundev
           outputs: |
             dist/github-contribution-grid-snake.svg?color_snake=#f47fff&background_color=#00FF00
-
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Ensure dist directory exists
         run: |
           mkdir -p dist
-          
+
       - name: Set permissions for dist directory
         run: |
           sudo chmod -R 777 dist
@@ -33,48 +32,45 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xmlstarlet
 
-          # Adiciona o gradiente arco-íris no SVG
-          xmlstarlet ed -s "//svg" -t elem -n "defs" -v "" \
+          # Adiciona o elemento <defs> ao SVG
+          xmlstarlet ed -s "/svg" -t elem -n "defs" -v "" dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
+
+          # Adiciona o gradiente arco-íris dentro de <defs>
+          xmlstarlet ed \
             -s "//defs" -t elem -n "linearGradient" -v "" \
-            -a "//linearGradient" -t attr -n "id" -v "rainbow" \
-            -a "//linearGradient" -t attr -n "x1" -v "0%" \
-            -a "//linearGradient" -t attr -n "y1" -v "0%" \
-            -a "//linearGradient" -t attr -n "x2" -v "100%" \
-            -a "//linearGradient" -t attr -n "y2" -v "0%" \
+            -i "//linearGradient" -t attr -n "id" -v "rainbow" \
+            -i "//linearGradient" -t attr -n "x1" -v "0%" \
+            -i "//linearGradient" -t attr -n "y1" -v "0%" \
+            -i "//linearGradient" -t attr -n "x2" -v "100%" \
+            -i "//linearGradient" -t attr -n "y2" -v "0%" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -a "//stop[1]" -t attr -n "offset" -v "0%" \
-            -a "//stop[1]" -t attr -n "stop-color" -v "#FF0000" \
+            -i "//stop[1]" -t attr -n "offset" -v "0%" \
+            -i "//stop[1]" -t attr -n "stop-color" -v "#FF0000" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -a "//stop[2]" -t attr -n "offset" -v "14%" \
-            -a "//stop[2]" -t attr -n "stop-color" -v "#FFA500" \
+            -i "//stop[2]" -t attr -n "offset" -v "14%" \
+            -i "//stop[2]" -t attr -n "stop-color" -v "#FFA500" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -a "//stop[3]" -t attr -n "offset" -v "28%" \
-            -a "//stop[3]" -t attr -n "stop-color" -v "#FFFF00" \
+            -i "//stop[3]" -t attr -n "offset" -v "28%" \
+            -i "//stop[3]" -t attr -n "stop-color" -v "#FFFF00" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -a "//stop[4]" -t attr -n "offset" -v "42%" \
-            -a "//stop[4]" -t attr -n "stop-color" -v "#00FF00" \
+            -i "//stop[4]" -t attr -n "offset" -v "42%" \
+            -i "//stop[4]" -t attr -n "stop-color" -v "#00FF00" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -a "//stop[5]" -t attr -n "offset" -v "57%" \
-            -a "//stop[5]" -t attr -n "stop-color" -v "#0000FF" \
+            -i "//stop[5]" -t attr -n "offset" -v "57%" \
+            -i "//stop[5]" -t attr -n "stop-color" -v "#0000FF" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -a "//stop[6]" -t attr -n "offset" -v "71%" \
-            -a "//stop[6]" -t attr -n "stop-color" -v "#4B0082" \
+            -i "//stop[6]" -t attr -n "offset" -v "71%" \
+            -i "//stop[6]" -t attr -n "stop-color" -v "#4B0082" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -a "//stop[7]" -t attr -n "offset" -v "85%" \
-            -a "//stop[7]" -t attr -n "stop-color" -v "#EE82EE" \
+            -i "//stop[7]" -t attr -n "offset" -v "85%" \
+            -i "//stop[7]" -t attr -n "stop-color" -v "#EE82EE" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -a "//stop[8]" -t attr -n "offset" -v "100%" \
-            -a "//stop[8]" -t attr -n "stop-color" -v "#FF0000" \
-            dist/github-contribution-grid-snake.svg
+            -i "//stop[8]" -t attr -n "offset" -v "100%" \
+            -i "//stop[8]" -t attr -n "stop-color" -v "#FF0000" \
+            dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
-          # Aplica o gradiente arco-íris diretamente nos caminhos da cobra
-          xmlstarlet ed -u '//path[contains(@class, "snake")]/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > dist/github-contribution-grid-snake.svg.tmp
-          mv dist/github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
-
-          # Garantir que os pontos e as linhas da contribuição usem as cores padrão do GitHub
-          xmlstarlet ed -u '//path[@class="dot"]' -v '#00FF00' dist/github-contribution-grid-snake.svg > dist/github-contribution-grid-snake.svg.tmp
-          xmlstarlet ed -u '//path[@class="line"]' -v '#00FF00' dist/github-contribution-grid-snake.svg.tmp > dist/github-contribution-grid-snake.svg
-          rm dist/github-contribution-grid-snake.svg.tmp
+          # Aplica o gradiente nos caminhos da cobra pela cor antiga (#f47fff)
+          xmlstarlet ed -u '//path[@fill="#f47fff"]/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
         run: |
