@@ -34,22 +34,24 @@ jobs:
         run: |
           # Define a set of unique colors for the animation (using a simple set of colors instead of gradient)
           COLORS='
-          <style>
-            @keyframes colorChange {
-              0% { fill: #FF0000; }   /* Red */
-              25% { fill: #00FF00; }  /* Green */
-              50% { fill: #0000FF; }  /* Blue */
-              75% { fill: #FFFF00; }  /* Yellow */
-              100% { fill: #8B00FF; } /* Purple */
-            }
+          <defs>
+            <style>
+              @keyframes colorChange {
+                0% { fill: #FF0000; }   /* Red */
+                25% { fill: #00FF00; }  /* Green */
+                50% { fill: #0000FF; }  /* Blue */
+                75% { fill: #FFFF00; }  /* Yellow */
+                100% { fill: #8B00FF; } /* Purple */
+              }
 
-            .s {
-              animation: colorChange 5s infinite; /* 5 seconds for one cycle */
-            }
-          </style>'
+              .s {
+                animation: colorChange 5s infinite; /* 5 seconds for one cycle */
+              }
+            </style>
+          </defs>'
 
-          # Insere o estilo de animação no SVG antes da tag de fechamento </svg>
-          echo "$COLORS" >> dist/github-contribution-grid-snake.svg
+          # Insere o estilo de animação no SVG dentro de <defs>
+          sed -i "s|</svg>|$COLORS</svg>|" dist/github-contribution-grid-snake.svg
 
           # Adiciona animação aos elementos com a classe .s, sem depender de sed
           xmlstarlet ed -u '//svg//*[contains(@class, "s")]' -v 'style="animation: colorChange 5s infinite;"' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
