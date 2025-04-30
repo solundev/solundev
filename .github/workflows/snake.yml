@@ -1,43 +1,33 @@
 name: Generate Snake
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:     # allows manual trigger
 
 jobs:
   generate:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Generate Snake Image
+      - name: Generate Snake SVG
         uses: Platane/snk@v3
         with:
           github_user_name: solundev
           outputs: dist/github-contribution-grid-snake.svg
-          args: '--color_snake="#FFFFFF" --color_dots="#FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#4B0082,#EE82EE" --background_color="#00000000"'
+          args: >
+            --color_snake="#FFFFFF"
+            --color_dots="#FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#4B0082,#EE82EE"
+            --background_color="#00000000"
 
-      - name: Check if the SVG was generated
-        run: |
-          ls -alh dist/
+      - name: List output
+        run: ls -alh dist/
 
-      - name: Ensure dist directory exists
-        run: |
-          mkdir -p dist
-
-      - name: Commit and push SVG
+      - name: Commit and push
         run: |
           git config --local user.name "GitHub Actions"
           git config --local user.email "actions@github.com"
           git add dist/github-contribution-grid-snake.svg
-          git commit -m "Update Snake image"
-          git push origin output
-
-      - name: Deploy to GitHub Pages
-        uses: crazy-max/ghaction-github-pages@v3
-        with:
-          target_branch: output
-          build_dir: dist
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git commit -m "Update snake contribution graph" || echo "No changes to commit"
+          git push
