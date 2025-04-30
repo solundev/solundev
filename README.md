@@ -80,9 +80,6 @@
   </a>
 </p>
 
-
-# Contribuições no GitHub
-
 ![snake gif](https://raw.githubusercontent.com/solundev/solundev/output/dist/github-contribution-grid-snake.svg)
 
 
