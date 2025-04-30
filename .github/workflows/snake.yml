@@ -68,12 +68,11 @@ jobs:
 
           # Aplica o gradiente arco-íris na cobrinha
           xmlstarlet ed -u '//path' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > dist/github-contribution-grid-snake.svg.tmp
-          mv dist/github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
+          
+          # Garantir permissões de leitura e escrita para o arquivo temporário
+          chmod 666 dist/github-contribution-grid-snake.svg.tmp
 
-      - name: Ensure file permissions
-        run: |
-          # Garantir permissões de leitura e escrita no arquivo SVG gerado
-          chmod 666 dist/github-contribution-grid-snake.svg
+          mv dist/github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
         run: |
