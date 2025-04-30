@@ -2,31 +2,27 @@ name: Generate Snake
 
 on:
   schedule:
-    - cron: "0 0 * * *" # Executa todo dia à meia-noite
+    - cron: "0 0 * * *" # Executa diariamente à meia-noite
   workflow_dispatch:
 
-permissions:
-  contents: write
-
 jobs:
-  generate:
+  build:
     runs-on: ubuntu-latest
-
     steps:
+      - uses: actions/checkout@v3
+
       - uses: Platane/snk@v3
         with:
           github_user_name: solundev
-          outputs: dist/github-contribution-grid-snake.svg
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          args: |
-            --color_snake "#FFFFFF"
-            --color_dots "#FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#4B0082,#EE82EE"
-            --background_color "#00000000"
+          outputs: |
+            dist/github-contribution-grid-snake.svg?color_snake=#FFFFFF&color_dots=#FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#4B0082,#EE82EE&background_color=#00000000
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Commit and push the snake svg
-        uses: EndBug/add-and-commit@v9
-        with:
-          author_name: github-actions
-          author_email: github-actions@github.com
-          message: "Generate contribution graph snake"
-          add: "dist/github-contribution-grid-snake.svg"
+      - name: Commit and Push
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add dist/
+          git commit -m "Generate snake animation"
+          git push origin HEAD:output --force
