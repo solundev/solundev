@@ -52,7 +52,7 @@ jobs:
           sed -i "s|</svg>|$COLORS</svg>|" dist/github-contribution-grid-snake.svg
 
           # Aplica a animação de cores a todos os elementos que têm a classe .s
-          sed -i 's/\.s {fill:[^;]*;/\.s {fill:#FF0000; animation: colorChange 5s infinite;/' dist/github-contribution-grid-snake.svg
+          sed -i 's|\.s {fill:[^;]*;|\.s {fill:#FF0000; animation: colorChange 5s infinite;|g' dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
         run: |
