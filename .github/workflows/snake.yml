@@ -27,6 +27,7 @@ jobs:
 
       - name: Inject animated rainbow style into SVG
         run: |
+          # Criar o CSS para animação
           echo '<style>
           @keyframes rainbow {
             0% { fill: #FF0000; }
@@ -41,11 +42,16 @@ jobs:
           }
           </style>' > rainbow-style.txt
 
+          # Define o caminho do arquivo SVG
           FILE="dist/github-contribution-grid-snake.svg"
 
-          # Modifica o arquivo SVG para incluir o <style> após a primeira tag <svg ...>
-          sed -i '1s|<svg|<svg xmlns="http://www.w3.org/2000/svg">|' "$FILE"
-          sed -i '/<svg[^>]*>/r rainbow-style.txt' "$FILE"
+          # Cria uma versão do SVG com o conteúdo do estilo incluído
+          head -n 1 "$FILE" > tmp.svg
+          cat rainbow-style.txt >> tmp.svg
+          tail -n +2 "$FILE" >> tmp.svg
+
+          # Substitui o SVG original pelo temporário
+          mv tmp.svg "$FILE"
 
       - name: Commit and Push result
         run: |
