@@ -69,11 +69,11 @@ jobs:
             -i "//linearGradient/stop[8]" -t attr -n "stop-color" -v "#FF0000" \
             dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
-          # Substitui todos os elementos de cor específica (roxa f47fff ou outras cores)
+          # Substitui todos os elementos de cor de preenchimento para o gradiente rainbow
           xmlstarlet ed -u '//svg//path/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
           xmlstarlet ed -u '//svg//circle/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
-          # Forçar a aplicação do gradiente a todos os elementos com "fill"
+          # Aplica o gradiente rainbow a todos os atributos "fill" do SVG
           xmlstarlet ed -u '//*[@fill]//@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
