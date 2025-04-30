@@ -62,11 +62,11 @@ jobs:
             -a "//stop[8]" -t attr -n "stop-color" -v "#FF0000" \
             dist/github-contribution-grid-snake.svg
 
-          # Usa sudo para criar e mover o arquivo temporário
-          sudo xmlstarlet ed -u '//path' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > dist/github-contribution-grid-snake.svg.tmp
+          # Usa um diretório temporário para salvar o arquivo
+          xmlstarlet ed -u '//path' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > github-contribution-grid-snake.svg.tmp
 
-          # Garantir permissões e renomear o arquivo
-          sudo mv dist/github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
+          # Mover para o diretório dist após criação
+          mv github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
         run: |
