@@ -49,38 +49,17 @@ jobs:
           FILE="dist/github-contribution-grid-snake.svg"
           BACKUP_FILE="dist/github-contribution-grid-snake-original.svg"
 
-          # Adiciona estilo animado ao SVG
-          echo '<style>
-          @keyframes rainbow {
-            0% { fill: #FF0000; }
-            20% { fill: #FF7F00; }
-            40% { fill: #FFFF00; }
-            60% { fill: #00FF00; }
-            80% { fill: #0000FF; }
-            100% { fill: #8B00FF; }
-          }
-          .rainbow {
-            animation: rainbow 5s infinite;
-          }
-          </style>' > rainbow-style.txt
-
-          # Prepara o arquivo temporário com as modificações
-          head -n 1 "$FILE" > tmp.svg
-          cat rainbow-style.txt >> tmp.svg
-          tail -n +2 "$FILE" >> tmp.svg
-
-          # Adiciona a classe .rainbow (apenas para elementos com 'fill')
-          sed -i 's/fill="[^"]*"/& class="rainbow"/' tmp.svg
-
-          # Verifica se o arquivo foi modificado corretamente
-          if [ ! -s tmp.svg ]; then
-            echo "Error: Modified SVG is empty. Restoration will occur."
-            mv "$BACKUP_FILE" "$FILE"
+          # Verifica se o arquivo existe antes de prosseguir
+          if [ ! -f "$FILE" ]; then
+            echo "Error: SVG file not found. Aborting modification."
             exit 1
           fi
 
-          # Substitui o arquivo final
-          mv tmp.svg "$FILE"
+          # Adiciona estilo animado diretamente após a tag <svg>
+          sed -i '1a <style>\n@keyframes rainbow {\n  0% { fill: #FF0000; }\n  20% { fill: #FF7F00; }\n  40% { fill: #FFFF00; }\n  60% { fill: #00FF00; }\n  80% { fill: #0000FF; }\n  100% { fill: #8B00FF; }\n}\n.rainbow {\n  animation: rainbow 5s infinite;\n}\n</style>' "$FILE"
+
+          # Adiciona a classe .rainbow nos elementos que possuem o atributo 'fill'
+          sed -i 's/fill="[^"]*"/& class="rainbow"/' "$FILE"
 
       - name: Debug - Output modified SVG content
         run: |
