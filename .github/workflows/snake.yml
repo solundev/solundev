@@ -19,6 +19,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Ensure dist directory exists
+        run: |
+          mkdir -p dist
+
       - name: Add rainbow gradient to snake
         run: |
           sudo apt-get update
