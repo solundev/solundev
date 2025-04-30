@@ -2,7 +2,7 @@ name: Generate Snake
 
 on:
   schedule:
-    - cron: "0 0 * * *"  # roda todo dia à meia-noite
+    - cron: "* 0/1 * * *" # executa todos os dias à meia-noite UTC
   workflow_dispatch:
 
 jobs:
@@ -14,9 +14,10 @@ jobs:
           github_user_name: solundev
           outputs: |
             dist/github-contribution-grid-snake.svg
-
-      - name: Push to output branch
-        uses: crazy-max/ghaction-github-pages@v4
+          color_snake: '#FF0000' # vermelho puro
+          color_dots: '#EEEEEE,#CCCCCC,#999999,#666666,#333333' # escala de cinza
+          background_color: '#00000000' # fundo transparente
+      - uses: crazy-max/ghaction-github-pages@v3
         with:
           target_branch: output
           build_dir: dist
