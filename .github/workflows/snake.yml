@@ -22,11 +22,28 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Verify SVG file exists
+        run: |
+          if [ ! -f dist/github-contribution-grid-snake.svg ]; then
+            echo "Error: SVG file was not generated."
+            exit 1
+          fi
+
       - name: Set write permission for dist
         run: sudo chmod -R 777 dist
 
       - name: Inject animated rainbow style into SVG
         run: |
+          # Define o arquivo SVG
+          FILE="dist/github-contribution-grid-snake.svg"
+
+          # Verifica se o arquivo existe antes de prosseguir
+          if [ ! -f "$FILE" ]; then
+            echo "Error: SVG file not found. Aborting modification."
+            exit 1
+          fi
+
+          # Adiciona estilo animado ao SVG
           echo '<style>
           @keyframes rainbow {
             0% { fill: #FF0000; }
@@ -41,19 +58,23 @@ jobs:
           }
           </style>' > rainbow-style.txt
 
-          FILE="dist/github-contribution-grid-snake.svg"
-
           # Prepara o arquivo temporário com as modificações
           head -n 1 "$FILE" > tmp.svg
           cat rainbow-style.txt >> tmp.svg
           tail -n +2 "$FILE" >> tmp.svg
-          
-          # Aplique a classe .rainbow nos elementos do SVG que devem ser animados
-          # Adicionar a classe nos elementos que têm o atributo 'fill'
+
+          # Aplica a classe .rainbow nos elementos do SVG
           sed -i 's/fill="[^"]*"/& class="rainbow"/' tmp.svg
 
-          # Substitua o arquivo final
+          # Substitui o arquivo final
           mv tmp.svg "$FILE"
+
+      - name: Verify modified SVG
+        run: |
+          if [ ! -s dist/github-contribution-grid-snake.svg ]; then
+            echo "Error: Modified SVG is empty or does not exist."
+            exit 1
+          fi
 
       - name: Commit and Push result
         run: |
