@@ -3,6 +3,10 @@ name: Generate Snake Profile
 on:
   workflow_dispatch:
 
+concurrency:
+  group: "snake"
+  cancel-in-progress: true
+
 jobs:
   generate:
     runs-on: ubuntu-latest
