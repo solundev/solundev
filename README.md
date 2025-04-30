@@ -81,7 +81,11 @@
 </p>
 
 
-![snake gif](https://github.com/solundev/solundev/blob/output/github-contribution-grid-snake.svg)
+# Contribuições no GitHub
+
+![snake gif](https://raw.githubusercontent.com/solundev/solundev/output/dist/github-contribution-grid-snake.svg)
+
+
 
 
 
