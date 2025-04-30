@@ -32,10 +32,10 @@ jobs:
 
       - name: Add rainbow gradient and apply it
         run: |
-          # Adiciona <defs> ao SVG se não existir
+          # Adiciona a tag <defs> ao SVG se não existir
           xmlstarlet ed -s "/svg" -t elem -n "defs" -v "" dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
-          # Adiciona o gradiente rainbow dentro de <defs>
+          # Adiciona o gradiente arco-íris dentro de <defs>
           xmlstarlet ed \
             -s "//defs" -t elem -n "linearGradient" -v "" \
             -i "//linearGradient" -t attr -n "id" -v "rainbow" \
