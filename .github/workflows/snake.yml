@@ -67,8 +67,8 @@ jobs:
             -a "//stop[8]" -t attr -n "stop-color" -v "#FF0000" \
             dist/github-contribution-grid-snake.svg
 
-          # Aplica o gradiente arco-íris nos caminhos da cobrinha (diretamente na "minhoca")
-          xmlstarlet ed -u '//path[@class="snake"]' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > dist/github-contribution-grid-snake.svg.tmp
+          # Aplica o gradiente arco-íris nos caminhos da cobra (diretamente na "minhoca")
+          xmlstarlet ed -u '//path[contains(@class, "snake")]' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > dist/github-contribution-grid-snake.svg.tmp
           mv dist/github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
 
           # Garantir que os pontos e as linhas da contribuição usem as cores padrão do GitHub
