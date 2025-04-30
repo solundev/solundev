@@ -49,11 +49,10 @@ jobs:
           </style>'
 
           # Insere o estilo de animação no SVG antes da tag de fechamento </svg>
-          sed -i "s|</svg>|$COLORS</svg>|" dist/github-contribution-grid-snake.svg
+          echo "$COLORS" >> dist/github-contribution-grid-snake.svg
 
-          # Aplica a animação de cores a todos os elementos que têm a classe .s
-          # Usando uma versão diferente do sed para garantir o uso de strings com / sem causar problemas.
-          sed -i 's|\(class="s"\)[^>]*|& {animation: colorChange 5s infinite;}|g' dist/github-contribution-grid-snake.svg
+          # Adiciona animação aos elementos com a classe .s, sem depender de sed
+          xmlstarlet ed -u '//svg//*[contains(@class, "s")]' -v 'style="animation: colorChange 5s infinite;"' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
         run: |
