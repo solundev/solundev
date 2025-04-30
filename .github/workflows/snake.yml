@@ -15,14 +15,57 @@ jobs:
         with:
           github_user_name: solundev
           outputs: |
-            dist/github-contribution-grid-snake.svg?color_snake=#FF0000&color_dots_animation=rainbow
+            dist/github-contribution-grid-snake.svg?color_snake=#FFFFFF&color_dots=#00FF00&background_color=#000000
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add rainbow gradient to snake
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xmlstarlet
+
+          # Adiciona o gradiente arco-íris no SVG
+          xmlstarlet ed -s "//svg" -t elem -n "defs" -v "" \
+            -s "//defs" -t elem -n "linearGradient" -v "" \
+            -a "//linearGradient" -t attr -n "id" -v "rainbow" \
+            -a "//linearGradient" -t attr -n "x1" -v "0%" \
+            -a "//linearGradient" -t attr -n "y1" -v "0%" \
+            -a "//linearGradient" -t attr -n "x2" -v "100%" \
+            -a "//linearGradient" -t attr -n "y2" -v "0%" \
+            -s "//linearGradient" -t elem -n "stop" -v "" \
+            -a "//stop[1]" -t attr -n "offset" -v "0%" \
+            -a "//stop[1]" -t attr -n "stop-color" -v "#FF0000" \
+            -s "//linearGradient" -t elem -n "stop" -v "" \
+            -a "//stop[2]" -t attr -n "offset" -v "14%" \
+            -a "//stop[2]" -t attr -n "stop-color" -v "#FFA500" \
+            -s "//linearGradient" -t elem -n "stop" -v "" \
+            -a "//stop[3]" -t attr -n "offset" -v "28%" \
+            -a "//stop[3]" -t attr -n "stop-color" -v "#FFFF00" \
+            -s "//linearGradient" -t elem -n "stop" -v "" \
+            -a "//stop[4]" -t attr -n "offset" -v "42%" \
+            -a "//stop[4]" -t attr -n "stop-color" -v "#00FF00" \
+            -s "//linearGradient" -t elem -n "stop" -v "" \
+            -a "//stop[5]" -t attr -n "offset" -v "57%" \
+            -a "//stop[5]" -t attr -n "stop-color" -v "#0000FF" \
+            -s "//linearGradient" -t elem -n "stop" -v "" \
+            -a "//stop[6]" -t attr -n "offset" -v "71%" \
+            -a "//stop[6]" -t attr -n "stop-color" -v "#4B0082" \
+            -s "//linearGradient" -t elem -n "stop" -v "" \
+            -a "//stop[7]" -t attr -n "offset" -v "85%" \
+            -a "//stop[7]" -t attr -n "stop-color" -v "#EE82EE" \
+            -s "//linearGradient" -t elem -n "stop" -v "" \
+            -a "//stop[8]" -t attr -n "offset" -v "100%" \
+            -a "//stop[8]" -t attr -n "stop-color" -v "#FF0000" \
+            dist/github-contribution-grid-snake.svg
+
+          # Aplica o gradiente arco-íris na cobrinha
+          xmlstarlet ed -u '//path' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > dist/github-contribution-grid-snake.svg.tmp
+          mv dist/github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add dist/
-          git commit -m "Generate snake animation"
+          git commit -m "Generate snake animation with rainbow effect"
           git push origin HEAD:output --force
