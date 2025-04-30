@@ -24,8 +24,9 @@ jobs:
           # Verificar se o diretório dist existe e criar, se necessário
           if [ ! -d "dist" ]; then
             mkdir -p dist
-            chmod -R 777 dist  # Permissões adequadas para escrita
           fi
+          # Garantir permissões para o diretório e os arquivos
+          chmod -R 777 dist
 
       - name: Add rainbow gradient to snake
         run: |
@@ -66,13 +67,12 @@ jobs:
             -a "//stop[8]" -t attr -n "stop-color" -v "#FF0000" \
             dist/github-contribution-grid-snake.svg
 
-          # Aplica o gradiente arco-íris na cobrinha
-          xmlstarlet ed -u '//path' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > dist/github-contribution-grid-snake.svg.tmp
-          
-          # Garantir permissões de leitura e escrita para o arquivo temporário
-          chmod 666 dist/github-contribution-grid-snake.svg.tmp
+          # Cria o arquivo temporário em outro diretório com permissões de superusuário
+          sudo xmlstarlet ed -u '//path' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > /tmp/github-contribution-grid-snake.svg.tmp
 
-          mv dist/github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
+          # Mover o arquivo temporário para o diretório dist e garantir permissões
+          sudo mv /tmp/github-contribution-grid-snake.svg.tmp dist/github-contribution-grid-snake.svg
+          sudo chmod 666 dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
         run: |
