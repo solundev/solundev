@@ -1,4 +1,4 @@
-name: Generate Snake Contribution Graph
+name: Generate Snake
 
 on:
   workflow_dispatch:
@@ -11,18 +11,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Generate Snake SVG
-        uses: Platane/snk@v3
+      - uses: Platane/snk@v3
+        id: snake
         with:
           github_user_name: solundev
+          outputs: |
+            dist/github-contribution-grid-snake.svg
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          outputs: dist/github-contribution-grid-snake.svg
           args: >
-            --color_snake="#FFFFFF"
-            --color_dots="#FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#4B0082,#EE82EE"
-            --background_color="#00000000"
+            --color_snake "#FFFFFF"
+            --color_dots "#FF0000,#FFA500,#FFFF00,#00FF00,#0000FF,#4B0082,#EE82EE"
+            --background_color "#00000000"
 
-      - name: Check if dist was created
-        run: ls -alh dist/
+      - name: Commit and push the snake svg
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: github-actions
+          author_email: github-actions@github.com
+          message: "generate contribution graph"
+          add: "dist/github-contribution-grid-snake.svg"
