@@ -30,13 +30,11 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y xmlstarlet
 
-      - name: Add rainbow gradient and apply it
+      - name: Apply rainbow gradient
         run: |
-          # Adiciona a tag <defs> ao SVG se não existir
-          xmlstarlet ed -s "/svg" -t elem -n "defs" -v "" dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
-
-          # Adiciona o gradiente arco-íris dentro de <defs>
+          # Adiciona <defs> e gradiente arco-íris
           xmlstarlet ed \
+            -s "/svg" -t elem -n "defs" -v "" \
             -s "//defs" -t elem -n "linearGradient" -v "" \
             -i "//linearGradient" -t attr -n "id" -v "rainbow" \
             -i "//linearGradient" -t attr -n "x1" -v "0%" \
@@ -47,26 +45,9 @@ jobs:
             -i "//linearGradient/stop[1]" -t attr -n "offset" -v "0%" \
             -i "//linearGradient/stop[1]" -t attr -n "stop-color" -v "#FF0000" \
             -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//linearGradient/stop[2]" -t attr -n "offset" -v "14%" \
-            -i "//linearGradient/stop[2]" -t attr -n "stop-color" -v "#FFA500" \
-            -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//linearGradient/stop[3]" -t attr -n "offset" -v "28%" \
-            -i "//linearGradient/stop[3]" -t attr -n "stop-color" -v "#FFFF00" \
-            -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//linearGradient/stop[4]" -t attr -n "offset" -v "42%" \
-            -i "//linearGradient/stop[4]" -t attr -n "stop-color" -v "#00FF00" \
-            -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//linearGradient/stop[5]" -t attr -n "offset" -v "57%" \
-            -i "//linearGradient/stop[5]" -t attr -n "stop-color" -v "#0000FF" \
-            -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//linearGradient/stop[6]" -t attr -n "offset" -v "71%" \
-            -i "//linearGradient/stop[6]" -t attr -n "stop-color" -v "#4B0082" \
-            -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//linearGradient/stop[7]" -t attr -n "offset" -v "85%" \
-            -i "//linearGradient/stop[7]" -t attr -n "stop-color" -v "#EE82EE" \
-            -s "//linearGradient" -t elem -n "stop" -v "" \
-            -i "//linearGradient/stop[8]" -t attr -n "offset" -v "100%" \
-            -i "//linearGradient/stop[8]" -t attr -n "stop-color" -v "#FF0000" \
+            -i "//linearGradient/stop[2]" -t attr -n "offset" -v "100%" \
+            -i "//linearGradient/stop[2]" -t attr -n "stop-color" -v "#0000FF" \
+            -u "//path/@fill" -v "url(#rainbow)" \
             dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
           # Substitui todos os elementos de cor de preenchimento para o gradiente rainbow
