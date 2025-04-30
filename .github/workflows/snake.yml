@@ -15,7 +15,8 @@ jobs:
         with:
           github_user_name: solundev
           outputs: |
-            dist/github-contribution-grid-snake.svg?color_snake=#f47fff&background_color=#00FF00
+            dist/github-contribution-grid-snake.svg
+          palette: rainbow
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -69,8 +70,8 @@ jobs:
             -i "//stop[8]" -t attr -n "stop-color" -v "#FF0000" \
             dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
-          # Aplica o gradiente nos caminhos da cobra pela cor antiga (#f47fff)
-          xmlstarlet ed -u '//path[@fill="#f47fff"]/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
+          # Aplica o gradiente nos elementos com fill="#f47fff"
+          xmlstarlet ed -u '//*[@fill="#f47fff"]/@fill' -v 'url(#rainbow)' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
 
       - name: Commit and Push
         run: |
