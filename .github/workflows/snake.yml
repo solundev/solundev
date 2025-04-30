@@ -51,8 +51,8 @@ jobs:
           </defs>
           ' > temp_styles.svg
 
-          # Inserir o conteúdo do arquivo temporário no SVG
-          sed -i "/<\/svg>/r temp_styles.svg" dist/github-contribution-grid-snake.svg
+          # Inserir o conteúdo do arquivo temporário dentro da tag <svg> sem causar erro
+          sed -i '/<svg[^>]*>/r temp_styles.svg' dist/github-contribution-grid-snake.svg
 
           # Adicionar animação aos elementos com a classe .s
           xmlstarlet ed -u '//svg//*[contains(@class, "s")]' -v 'style="animation: colorChange 5s infinite;"' dist/github-contribution-grid-snake.svg > tmp.svg && mv tmp.svg dist/github-contribution-grid-snake.svg
