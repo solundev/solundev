@@ -58,8 +58,17 @@ jobs:
             exit 1
           fi
 
-          # Adicionar o estilo diretamente dentro da tag <svg> na linha seguinte
-          awk '/<svg/{print; print "<style>\n@keyframes rainbow {\n  0% { fill: #FF0000; }\n  20% { fill: #FF7F00; }\n  40% { fill: #FFFF00; }\n  60% { fill: #00FF00; }\n  80% { fill: #0000FF; }\n  100% { fill: #8B00FF; }\n}\n.rainbow {\n  animation: rainbow 5s infinite;\n}\n</style>"; next}1' "$FILE" > tmp.svg
+          # Criar um arquivo temporário sem inserir conteúdo malformado
+          {
+            awk '/<svg/{print; print "<style>\n@keyframes rainbow {\n  0% { fill: #FF0000; }\n  20% { fill: #FF7F00; }\n  40% { fill: #FFFF00; }\n  60% { fill: #00FF00; }\n  80% { fill: #0000FF; }\n  100% { fill: #8B00FF; }\n}\n.rainbow {\n  animation: rainbow 5s infinite;\n}\n</style>"; next}1' "$FILE"
+          } > tmp.svg
+
+          # Validar o arquivo temporário antes de substituir
+          if ! xmllint --noout tmp.svg; then
+            echo "Error: Modified SVG is not well-formed. Restoration will occur."
+            mv "$BACKUP_FILE" "$FILE"
+            exit 1
+          fi
 
           # Substituir o arquivo original pelo arquivo modificado
           mv tmp.svg "$FILE"
