@@ -44,6 +44,12 @@ jobs:
           echo "Original SVG content:"
           cat dist/github-contribution-grid-snake-original.svg
 
+      - name: Clean up SVG file
+        run: |
+          FILE="dist/github-contribution-grid-snake.svg"
+          # Remove linhas vazias e espaços extras
+          sed -i '/^\s*$/d' "$FILE"
+
       - name: Inject animated rainbow style into SVG
         run: |
           FILE="dist/github-contribution-grid-snake.svg"
@@ -75,6 +81,12 @@ jobs:
           fi
           if [ ! -s "$FILE" ]; then
             echo "Error: Modified SVG file is empty."
+            exit 1
+          fi
+
+          # Validar o arquivo SVG para garantir que não haja conteúdo extra
+          if ! xmllint --noout "$FILE"; then
+            echo "Error: SVG file is not well-formed."
             exit 1
           fi
 
