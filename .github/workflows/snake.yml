@@ -18,7 +18,7 @@ jobs:
       - name: Install xmllint
         run: sudo apt-get update && sudo apt-get install -y libxml2-utils
 
-      # Passo 3: Gerar o SVG da "minhoca"
+      # Passo 3: Gerar o SVG original
       - name: Generate snake SVG
         uses: Platane/snk@v3
         with:
@@ -50,7 +50,7 @@ jobs:
         run: |
           cp dist/github-contribution-grid-snake.svg dist/github-contribution-grid-snake-original.svg
 
-      # Passo 7: Adicionar estilo animado e classe "rainbow" nos elementos do SVG
+      # Passo 7: Adicionar estilo animado e classe "rainbow" no SVG
       - name: Inject animated rainbow style into SVG
         run: |
           FILE="dist/github-contribution-grid-snake.svg"
@@ -73,10 +73,10 @@ jobs:
           </style>
           EOF
 
-          # Inserir o estilo após a tag <svg>
+          # Insere o estilo após a tag <svg>
           sed -e '/<svg>/r style_block.txt' "$FILE" > tmp1.svg
 
-          # Adicionar a classe .rainbow a todos os elementos com atributo fill
+          # Adiciona a classe .rainbow a todos os elementos com atributo fill
           sed -i 's/fill="[^"]*"/& class="rainbow"/g' tmp1.svg
 
           # Validar o SVG modificado
