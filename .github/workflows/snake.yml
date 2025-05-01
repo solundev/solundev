@@ -37,7 +37,7 @@ jobs:
             exit 1
           fi
 
-      - name: Backup original SVG (with fixed permissions)
+      - name: Backup original SVG
         run: |
           sudo chmod -R 777 dist
           cp dist/github-contribution-grid-snake.svg dist/github-contribution-grid-snake-original.svg
@@ -51,26 +51,33 @@ jobs:
         run: |
           FILE="dist/github-contribution-grid-snake.svg"
           BACKUP_FILE="dist/github-contribution-grid-snake-original.svg"
+          
+          # Define the style block
+          STYLE='<style>
+          @keyframes rainbow {
+            0% { fill: #FF0000; }
+            20% { fill: #FF7F00; }
+            40% { fill: #FFFF00; }
+            60% { fill: #00FF00; }
+            80% { fill: #0000FF; }
+            100% { fill: #8B00FF; }
+          }
+          .rainbow {
+            animation: rainbow 5s infinite;
+          }
+          </style>'
 
-          # Verifica se o arquivo existe antes de prosseguir
-          if [ ! -f "$FILE" ]; then
-            echo "Error: SVG file not found. Aborting modification."
-            exit 1
-          fi
+          # Insert the style block after the opening <svg> tag
+          awk -v style="$STYLE" '/<svg/ {print; print style; next}1' "$FILE" > tmp.svg
 
-          # Criar um arquivo temporário sem inserir conteúdo malformado
-          {
-            awk '/<svg/{print; print "<style>\n@keyframes rainbow {\n  0% { fill: #FF0000; }\n  20% { fill: #FF7F00; }\n  40% { fill: #FFFF00; }\n  60% { fill: #00FF00; }\n  80% { fill: #0000FF; }\n  100% { fill: #8B00FF; }\n}\n.rainbow {\n  animation: rainbow 5s infinite;\n}\n</style>"; next}1' "$FILE"
-          } > tmp.svg
-
-          # Validar o arquivo temporário antes de substituir
+          # Validate the modified SVG
           if ! xmllint --noout tmp.svg; then
             echo "Error: Modified SVG is not well-formed. Restoration will occur."
             mv "$BACKUP_FILE" "$FILE"
             exit 1
           fi
 
-          # Substituir o arquivo original pelo arquivo modificado
+          # Replace the original file with the modified version
           mv tmp.svg "$FILE"
 
       - name: Debug - Output modified SVG content
@@ -90,7 +97,7 @@ jobs:
             exit 1
           fi
 
-          # Validar o arquivo SVG para garantir que não haja conteúdo extra
+          # Validate the final SVG file
           if ! xmllint --noout "$FILE"; then
             echo "Error: SVG file is not well-formed."
             exit 1
