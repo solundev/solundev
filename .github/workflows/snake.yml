@@ -50,44 +50,24 @@ jobs:
         run: |
           cp dist/github-contribution-grid-snake.svg dist/github-contribution-grid-snake-original.svg
 
-      # Passo 7: Adicionar estilo animado e classe "rainbow" no SVG
-      - name: Inject animated rainbow style into SVG
+      # Passo 7: Adicionar animação de arco-íris usando animações nativas SVG
+      - name: Inject animated rainbow style into SVG using native animations
         run: |
           FILE="dist/github-contribution-grid-snake.svg"
           BACKUP_FILE="dist/github-contribution-grid-snake-original.svg"
-          
-          # Define o bloco de estilo com keyframes para animação de cores
-          cat <<EOF > style_block.txt
-          <style>
-          @keyframes rainbow {
-            0% { fill: #FF0000; }
-            20% { fill: #FF7F00; }
-            40% { fill: #FFFF00; }
-            60% { fill: #00FF00; }
-            80% { fill: #0000FF; }
-            100% { fill: #8B00FF; }
-          }
-          .rainbow {
-            animation: rainbow 5s infinite;
-          }
-          </style>
-          EOF
 
-          # Insere o estilo após a tag <svg>
-          sed -e '/<svg>/r style_block.txt' "$FILE" > tmp1.svg
-
-          # Adiciona a classe .rainbow a todos os elementos com atributo fill
-          sed -i 's/fill="[^"]*"/& class="rainbow"/g' tmp1.svg
+          # Adicionar animações nativas SVG com <animate>
+          sed -i '/<rect /{
+              s/fill="[^"]*"//
+              s/<rect /<rect><animate attributeName="fill" values="#FF0000;#FF7F00;#FFFF00;#00FF00;#0000FF;#8B00FF;#FF0000" dur="5s" repeatCount="indefinite" \/><\/rect>/
+          }' "$FILE"
 
           # Validar o SVG modificado
-          if ! xmllint --noout tmp1.svg; then
+          if ! xmllint --noout "$FILE"; then
             echo "Error: Modified SVG is not well-formed. Restoring original file."
             mv "$BACKUP_FILE" "$FILE"
             exit 1
           fi
-
-          # Substituir o arquivo original pelo arquivo modificado
-          mv tmp1.svg "$FILE"
 
       # Passo 8: Depuração - Exibir conteúdo do SVG modificado
       - name: Debug - Output modified SVG content
