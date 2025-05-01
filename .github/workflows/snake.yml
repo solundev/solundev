@@ -14,10 +14,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      # Passo 2: Corrigir permissões na pasta dist antes de qualquer operação
-      - name: Fix permissions for the dist folder
-        run: |
-          sudo chmod -R 777 dist || true
+      # Passo 2: Corrigir permissões na pasta dist e no repositório
+      - name: Fix permissions for the repo
+        run: sudo chmod -R 777 .
 
       # Passo 3: Instalar dependências necessárias (xmllint para validação XML)
       - name: Install xmllint
