@@ -18,7 +18,7 @@ jobs:
       - name: Install xmllint
         run: sudo apt-get update && sudo apt-get install -y libxml2-utils
 
-      # Passo 3: Gerar o SVG original
+      # Passo 3: Gerar o SVG inicial da "minhoca"
       - name: Generate snake SVG
         uses: Platane/snk@v3
         with:
@@ -41,22 +41,18 @@ jobs:
             exit 1
           fi
 
-      # Passo 5: Corrigir permissões na pasta dist
-      - name: Fix permissions for the dist folder
-        run: sudo chmod -R 777 dist
-
-      # Passo 6: Fazer backup do SVG original
+      # Passo 5: Fazer backup do SVG original
       - name: Backup original SVG
         run: |
           cp dist/github-contribution-grid-snake.svg dist/github-contribution-grid-snake-original.svg
 
-      # Passo 7: Adicionar animação de arco-íris usando animações nativas SVG
-      - name: Inject animated rainbow style into SVG using native animations
+      # Passo 6: Modificar o SVG para adicionar animações nativas com <animate>
+      - name: Inject animated rainbow style into SVG
         run: |
           FILE="dist/github-contribution-grid-snake.svg"
           BACKUP_FILE="dist/github-contribution-grid-snake-original.svg"
-
-          # Adicionar animações nativas SVG com <animate>
+          
+          # Adiciona animações nativas SVG com <animate>
           sed -i '/<rect /{
               s/fill="[^"]*"//
               s/<rect /<rect><animate attributeName="fill" values="#FF0000;#FF7F00;#FFFF00;#00FF00;#0000FF;#8B00FF;#FF0000" dur="5s" repeatCount="indefinite" \/><\/rect>/
@@ -69,13 +65,13 @@ jobs:
             exit 1
           fi
 
-      # Passo 8: Depuração - Exibir conteúdo do SVG modificado
+      # Passo 7: Depuração - Exibir conteúdo do SVG modificado
       - name: Debug - Output modified SVG content
         run: |
           echo "Modified SVG content:"
           cat dist/github-contribution-grid-snake.svg
 
-      # Passo 9: Verificar se o SVG modificado foi gerado corretamente
+      # Passo 8: Verificar se o SVG modificado foi gerado corretamente
       - name: Verify modified SVG
         run: |
           FILE="dist/github-contribution-grid-snake.svg"
@@ -94,7 +90,7 @@ jobs:
             exit 1
           fi
 
-      # Passo 10: Commit e push do SVG modificado
+      # Passo 9: Commit e push do SVG modificado
       - name: Commit and Push result
         run: |
           git config --global user.name 'github-actions'
