@@ -49,8 +49,9 @@ jobs:
           FILE="dist/github-contribution-grid-snake.svg"
           BACKUP_FILE="dist/github-contribution-grid-snake-original.svg"
           
-          # Define the style block
-          STYLE='<style>
+          # Define the style block in a temporary file
+          cat <<EOF > style_block.txt
+          <style>
           @keyframes rainbow {
             0% { fill: #FF0000; }
             20% { fill: #FF7F00; }
@@ -62,10 +63,11 @@ jobs:
           .rainbow {
             animation: rainbow 5s infinite;
           }
-          </style>'
+          </style>
+          EOF
 
           # Insert the style after the opening <svg> tag
-          awk '/<svg/{print; print "'"$STYLE"'"; next}1' "$FILE" > tmp.svg
+          sed -e '/<svg>/r style_block.txt' "$FILE" > tmp.svg
 
           # Validate the modified SVG
           if ! xmllint --noout tmp.svg; then
