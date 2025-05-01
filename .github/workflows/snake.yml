@@ -47,12 +47,6 @@ jobs:
           echo "Original SVG content:"
           cat dist/github-contribution-grid-snake-original.svg
 
-      - name: Clean up SVG file
-        run: |
-          FILE="dist/github-contribution-grid-snake.svg"
-          # Remove linhas vazias e espaços extras
-          sed -i '/^\s*$/d' "$FILE"
-
       - name: Inject animated rainbow style into SVG
         run: |
           FILE="dist/github-contribution-grid-snake.svg"
@@ -64,11 +58,11 @@ jobs:
             exit 1
           fi
 
-          # Adiciona estilo animado diretamente após a tag <svg>
-          sed -i '1a <style>\n@keyframes rainbow {\n  0% { fill: #FF0000; }\n  20% { fill: #FF7F00; }\n  40% { fill: #FFFF00; }\n  60% { fill: #00FF00; }\n  80% { fill: #0000FF; }\n  100% { fill: #8B00FF; }\n}\n.rainbow {\n  animation: rainbow 5s infinite;\n}\n</style>' "$FILE"
+          # Adicionar o estilo diretamente dentro da tag <svg> na linha seguinte
+          awk '/<svg/{print; print "<style>\n@keyframes rainbow {\n  0% { fill: #FF0000; }\n  20% { fill: #FF7F00; }\n  40% { fill: #FFFF00; }\n  60% { fill: #00FF00; }\n  80% { fill: #0000FF; }\n  100% { fill: #8B00FF; }\n}\n.rainbow {\n  animation: rainbow 5s infinite;\n}\n</style>"; next}1' "$FILE" > tmp.svg
 
-          # Adiciona a classe .rainbow nos elementos que possuem o atributo 'fill'
-          sed -i 's/fill="[^"]*"/& class="rainbow"/' "$FILE"
+          # Substituir o arquivo original pelo arquivo modificado
+          mv tmp.svg "$FILE"
 
       - name: Debug - Output modified SVG content
         run: |
