@@ -2,7 +2,7 @@ name: Generate Snake Reworked
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * *" # Executa diariamente à meia-noite
   workflow_dispatch:
 
 jobs:
@@ -10,12 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Passo 1: Baixar o repositório
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      # Passo 2: Instalar dependências necessárias (xmllint para validação XML)
       - name: Install xmllint
         run: sudo apt-get update && sudo apt-get install -y libxml2-utils
 
+      # Passo 3: Gerar o SVG da "minhoca"
       - name: Generate snake SVG
         uses: Platane/snk@v3
         with:
@@ -25,6 +28,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Passo 4: Verificar se o arquivo SVG foi gerado e não está vazio
       - name: Verify SVG file exists and is not empty
         run: |
           FILE="dist/github-contribution-grid-snake.svg"
@@ -37,19 +41,22 @@ jobs:
             exit 1
           fi
 
+      # Passo 5: Corrigir permissões na pasta dist
       - name: Fix permissions for the dist folder
         run: sudo chmod -R 777 dist
 
+      # Passo 6: Fazer backup do SVG original
       - name: Backup original SVG
         run: |
           cp dist/github-contribution-grid-snake.svg dist/github-contribution-grid-snake-original.svg
 
+      # Passo 7: Adicionar estilo animado e classe "rainbow" nos elementos do SVG
       - name: Inject animated rainbow style into SVG
         run: |
           FILE="dist/github-contribution-grid-snake.svg"
           BACKUP_FILE="dist/github-contribution-grid-snake-original.svg"
           
-          # Define the style block in a temporary file
+          # Define o bloco de estilo com keyframes para animação de cores
           cat <<EOF > style_block.txt
           <style>
           @keyframes rainbow {
@@ -66,24 +73,29 @@ jobs:
           </style>
           EOF
 
-          # Insert the style after the opening <svg> tag
-          sed -e '/<svg>/r style_block.txt' "$FILE" > tmp.svg
+          # Inserir o estilo após a tag <svg>
+          sed -e '/<svg>/r style_block.txt' "$FILE" > tmp1.svg
 
-          # Validate the modified SVG
-          if ! xmllint --noout tmp.svg; then
+          # Adicionar a classe .rainbow a todos os elementos com atributo fill
+          sed -i 's/fill="[^"]*"/& class="rainbow"/g' tmp1.svg
+
+          # Validar o SVG modificado
+          if ! xmllint --noout tmp1.svg; then
             echo "Error: Modified SVG is not well-formed. Restoring original file."
             mv "$BACKUP_FILE" "$FILE"
             exit 1
           fi
 
-          # Replace the original file with the modified version
-          mv tmp.svg "$FILE"
+          # Substituir o arquivo original pelo arquivo modificado
+          mv tmp1.svg "$FILE"
 
+      # Passo 8: Depuração - Exibir conteúdo do SVG modificado
       - name: Debug - Output modified SVG content
         run: |
           echo "Modified SVG content:"
           cat dist/github-contribution-grid-snake.svg
 
+      # Passo 9: Verificar se o SVG modificado foi gerado corretamente
       - name: Verify modified SVG
         run: |
           FILE="dist/github-contribution-grid-snake.svg"
@@ -96,12 +108,13 @@ jobs:
             exit 1
           fi
 
-          # Validate the final SVG file
+          # Validar o arquivo SVG final
           if ! xmllint --noout "$FILE"; then
             echo "Error: SVG file is not well-formed."
             exit 1
           fi
 
+      # Passo 10: Commit e push do SVG modificado
       - name: Commit and Push result
         run: |
           git config --global user.name 'github-actions'
