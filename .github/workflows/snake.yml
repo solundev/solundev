@@ -39,13 +39,7 @@ jobs:
 
       - name: Backup original SVG
         run: |
-          sudo chmod -R 777 dist
           cp dist/github-contribution-grid-snake.svg dist/github-contribution-grid-snake-original.svg
-
-      - name: Debug - Output original SVG content
-        run: |
-          echo "Original SVG content:"
-          cat dist/github-contribution-grid-snake-original.svg
 
       - name: Inject animated rainbow style into SVG
         run: |
@@ -67,12 +61,12 @@ jobs:
           }
           </style>'
 
-          # Insert the style block after the opening <svg> tag
-          awk -v style="$STYLE" '/<svg/ {print; print style; next}1' "$FILE" > tmp.svg
+          # Insert the style after the opening <svg> tag
+          awk '/<svg/{print; print "'"$STYLE"'"; next}1' "$FILE" > tmp.svg
 
           # Validate the modified SVG
           if ! xmllint --noout tmp.svg; then
-            echo "Error: Modified SVG is not well-formed. Restoration will occur."
+            echo "Error: Modified SVG is not well-formed. Restoring original file."
             mv "$BACKUP_FILE" "$FILE"
             exit 1
           fi
