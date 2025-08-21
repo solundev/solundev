@@ -1,6 +1,6 @@
 <img src="https://i.imgur.com/FkJFX4f.gif" alt="ilustração de um computador" min-width="400px" max-width="400px" width="400px" align="right">
 
-### 💖 Olá! Me chamo ℳatheus (Solun)
+### 💖 Olá! Me chamo ℳatheus (Stefzy)
 > [!IMPORTANT]
 > Deixei de trabalhar com o projeto Jeth e relacionados em 2024. Desde então, **NÃO** atendo a pedidos de suporte relacionados à [KorrdsTech](https://github.com/KorrdsTech).
 
